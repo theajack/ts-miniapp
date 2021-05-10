@@ -1,5 +1,11 @@
-import 'mp-mixin';
+import '../../../code_src/github_projects/mp-mixin/src/index.js';
 
+
+wx.mixin({
+  data: {
+    globalData: 'globalData'
+  },
+});
 
 // app.ts
 App<IAppOption>({

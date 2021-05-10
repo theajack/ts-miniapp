@@ -10,7 +10,7 @@
   "author": "",
   "license": "",
   "dependencies": {
-    "mp-mixin": "0.0.4"
+    "mp-mixin": "0.0.6"
   },
   "devDependencies": {
     "miniprogram-api-typings": "^2.8.3-1",
