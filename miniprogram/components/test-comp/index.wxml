@@ -1,0 +1,2 @@
+<!--components/test-comp/index.wxml-->
+<text>{{compProp}}</text>

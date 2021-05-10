@@ -1,27 +1,27 @@
-import '../../../code_src/github_projects/mp-mixin/src/index.js';
+import './utils/mp-mixin/index';
 
 
 wx.mixin({
-  data: {
-    globalData: 'globalData'
-  },
+    data: {
+        globalData: 'globalData'
+    },
 });
 
 // app.ts
 App<IAppOption>({
-  globalData: {},
-  onLaunch() {
+    globalData: {},
+    onLaunch () {
     // 展示本地存储能力
-    const logs = wx.getStorageSync('logs') || []
-    logs.unshift(Date.now())
-    wx.setStorageSync('logs', logs)
+        const logs = wx.getStorageSync('logs') || [];
+        logs.unshift(Date.now());
+        wx.setStorageSync('logs', logs);
 
-    // 登录
-    wx.login({
-      success: res => {
-        console.log(res.code)
-        // 发送 res.code 到后台换取 openId, sessionKey, unionId
-      },
-    })
-  },
-})
+        // 登录
+        wx.login({
+            success: res => {
+                console.log(res.code);
+                // 发送 res.code 到后台换取 openId, sessionKey, unionId
+            },
+        });
+    },
+});

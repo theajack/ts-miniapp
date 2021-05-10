@@ -1,6 +1,10 @@
 <!--index.wxml-->
 <view class="container">
   <view class="userinfo">
+    <test-comp compProp="{{compProp}}"></test-comp>
+    <button class="btn" type="primary" bindtap="onTap">
+      按钮文本
+    </button>
     <block wx:if="{{canIUseOpenData}}" calss="userinfo-opendata">
       <view class="userinfo-avatar" bindtap="bindViewTap">
         <open-data type="userAvatarUrl"></open-data>
