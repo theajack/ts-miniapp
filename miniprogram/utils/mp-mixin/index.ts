@@ -2,7 +2,7 @@
  * @Author: tackchen
  * @Date: 2021-05-01 18:27:03
  * @LastEditors: theajack
- * @LastEditTime: 2021-05-11 22:42:22
+ * @LastEditTime: 2021-05-11 23:41:24
  * @FilePath: \mp-mixin\src\index.ts
  * @Description: Coding something
  */
@@ -29,10 +29,10 @@ function hackPageBuilder () {
 }
 
 function hackComponentBuilder () {
-    // const nativeComponent = Component;
-    // Component = function (options: IComponentOption) {
-    //     nativeComponent(mixinMainProcess(options, TARGET_TYPE.COMPONENT));
-    // };
+    const nativeComponent = Component;
+    Component = function (options: IComponentOption) {
+        nativeComponent(mixinMainProcess(options, TARGET_TYPE.COMPONENT));
+    };
 }
 
 export function mixinMainProcess (
@@ -40,7 +40,6 @@ export function mixinMainProcess (
     type: TARGET_TYPE = TARGET_TYPE.PAGE
 ) {
     if (!options.data) { options.data = {}; }
-    if (!options.__mixin) { options.__mixin = {}; }
     const storeTool: IJson = {};
     options = _mixinGlobal({options, type, storeTool});
 

@@ -2,7 +2,7 @@
  * @Author: tackchen
  * @Date: 2021-05-02 11:11:35
  * @LastEditors: theajack
- * @LastEditTime: 2021-05-11 22:25:32
+ * @LastEditTime: 2021-05-12 00:06:05
  * @FilePath: \mp-mixin\src\type.d.ts
  * @Description: Coding something
  */
@@ -11,14 +11,15 @@ export interface IStore {
     state: IJson;
     __: {
         _id: number;
-        _injectContext (currentContext: IContext, storeTool: IJson): void;
-        _hitState (setDataAttr: string, value: any, ignoreList: string[]): boolean;
+        _injectContext (currentContext: IContext, storeTool: IJson, type: number): void;
+        _hitState (setDataAttr: string, value: any, ignoreList: string[], newContext: IContext): boolean;
     }
 }
 
 export interface IEventReady<T> {
-    onEventReady(fn: (...args: T[])=>void, ...args: T[]): void;
+    onEventReady(fn: (...args: T[])=>void, ...args: T[]): Function;
     eventReady(...args: T[]): void;
+    removeListener(fn: Function): void;
 }
 
 export interface IJson<T = any> {

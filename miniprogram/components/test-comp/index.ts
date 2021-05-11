@@ -17,7 +17,12 @@ Component({
         compData: 'comp data'
     },
     lifetimes: {
-
+        attached () {
+            console.log('attached');
+        },
+        detached () {
+            console.log('detached');
+        }
     },
     pageLifetimes: {
 

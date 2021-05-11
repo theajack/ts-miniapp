@@ -2,7 +2,7 @@
  * @Author: tackchen
  * @Date: 2021-05-01 20:29:47
  * @LastEditors: theajack
- * @LastEditTime: 2021-05-11 22:39:50
+ * @LastEditTime: 2021-05-12 00:57:39
  * @FilePath: \mp-mixin\src\store.ts
  * @Description: 状态共享
  */
@@ -23,17 +23,17 @@ export function _createStore (state: IJson): IStore {
         }
         return attrMap[setDataAttr];
     };
-    const {onEventReady, eventReady} = creatEventReady<IJson>();
+    const {onEventReady, eventReady, removeListener} = creatEventReady<IJson>();
 
     const modifyState = (
-        attrs: string[], value: any, setDataAttr: string
+        attrs: string[], value: any, setDataAttr: string, newContext: IContext
     ) => {
         let data = state;
         const last = attrs.length - 1;
         attrs.forEach((attr: string, index: number) => {
             if (index === last) {
                 data[attr] = value;
-                eventReady({[setDataAttr]: value});
+                eventReady({[setDataAttr]: value}, newContext);
             } else {
                 if (typeof data[attr] === 'undefined') {
                     throw new Error(`Error setData:${setDataAttr}`);
@@ -47,44 +47,58 @@ export function _createStore (state: IJson): IStore {
         state,
         __: {
             _id: currentId,
-            _injectContext (currentContext: IContext, storeTool: IJson) {
-                if (storeTool._store[currentId].inited) {
-                    return;
-                }
-                storeTool._context = currentContext;
-                storeTool._store[currentId].inited = true;
+            _injectContext (currentContext: IContext, storeTool: IJson, type: TARGET_TYPE) {
                 hackSetData(currentContext, currentId, storeTool);
-                onEventReady((data) => {
-                    storeTool._nativeSetData.call(currentContext, data);
+                const listener = onEventReady((data, newContext) => {
+                    // ! 仅对其他页面或组件进行出发 setData
+                    if (currentContext !== newContext) {
+                        console.log('onEventReady', data);
+                        storeTool._nativeSetData.call(currentContext, data);
+                    }
                 });
+                if (type === TARGET_TYPE.PAGE) {
+                    // ! 对已经不再显示的 page 取消监听
+                    const nativeUnload = currentContext.onUnload;
+                    currentContext.onUnload = function () {
+                        removeListener(listener);
+                        nativeUnload.call(currentContext);
+                    };
+                } else {
+                    // todo 有待增加 对组件和page原有属的处理 默认是Page会覆盖 组件会忽略
+                    // todo 有待hack组件的dtached 事件，在其中 removeListener
+                }
             },
-            _hitState (setDataAttr: string, value: any, ignoreList: string[]) {
+            _hitState (setDataAttr: string, value: any, ignoreList: string[], newContext: IContext) {
                 const attrs = getAttrs(setDataAttr);
                 const modifyAttr = attrs[0];
                 if (typeof state[modifyAttr] === 'undefined' || ignoreList.indexOf(modifyAttr) !== -1) {
                     return false;
                 }
-                modifyState(attrs, value, setDataAttr);
+                modifyState(attrs, value, setDataAttr, newContext);
                 return true;
             }
         }
     };
 }
-
+// todo 有待测试组件局部使用 mixin
+// todo 有待测试多个 store 在一个组件或者page上的场景，包含局部 + 全局；多个局部+全局；多个局部三个场景
 function hackSetData (context: IContext, storeId: number, storeTool: IJson) {
     const nativeSetData = context.setData;
-    if (!storeTool._setDataList) {
-        storeTool._setDataList = [];
+    // ! _setDataList 需要挂在 context上而不能挂在storeTool上 因为每次onload出来的都是一个新的context
+    // ! 而 storeTool 是同一个
+    if (!context._setDataList) {
+        context._setDataList = [];
         storeTool._nativeSetData = nativeSetData;
         context.setData = (data, callback) => {
-            storeTool._setDataList.forEach((fn: Function) => fn(data));
+            context._setDataList.forEach((fn: Function) => fn(data));
+            console.log('nativeSetData.call(context, data, callback);', data);
             return nativeSetData.call(context, data, callback);
         };
     }
-    storeTool._setDataList.push((data: IJson) => {
+    context._setDataList.push((data: IJson) => {
         const {store, ignoreList} = storeTool._store[storeId];
         for (const k in data) {
-            store.__._hitState(k, data[k], ignoreList);
+            store.__._hitState(k, data[k], ignoreList, context);
         }
     });
 }
@@ -93,6 +107,7 @@ function handleSetDataAttr (attr: string) {
     attr = attr.replace(/\[/g, '.').replace(/\]/g, '');
     return attr.split('.');
 }
+
 
 export function initStoreHacker ({
     options,
@@ -153,7 +168,7 @@ function handleStore ({
 }) {
     if (!store) return;
     const setDataHacker = function (this: IContext) {
-        store.__._injectContext(this, storeTool);
+        store.__._injectContext(this, storeTool, type);
     };
     const nativeOnLoad = readOnloadLifeTime(options, type);
     if (!nativeOnLoad) { // 劫持onLoad来注入setData
@@ -171,7 +186,6 @@ function handleStore ({
         storeTool._onLoadList.push(setDataHacker);
     }
 }
-
 export function _initGlobalStore (state: IJson | IStore) {
     globalStore = ((!state.__) ? _createStore(state) : state) as IStore;
     return globalStore;

@@ -2,7 +2,7 @@
  * @Author: tackchen
  * @Date: 2021-05-01 19:32:42
  * @LastEditors: theajack
- * @LastEditTime: 2021-05-11 22:36:13
+ * @LastEditTime: 2021-05-11 22:45:21
  * @FilePath: \mp-mixin\src\mixin.ts
  * @Description: Coding something
  */
