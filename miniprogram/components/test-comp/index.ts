@@ -16,6 +16,12 @@ Component({
     data: {
         compData: 'comp data'
     },
+    lifetimes: {
+
+    },
+    pageLifetimes: {
+
+    },
   
     /**
      * 组件的方法列表

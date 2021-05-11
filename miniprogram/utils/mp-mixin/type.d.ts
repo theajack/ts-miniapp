@@ -2,7 +2,7 @@
  * @Author: tackchen
  * @Date: 2021-05-02 11:11:35
  * @LastEditors: theajack
- * @LastEditTime: 2021-05-09 09:27:25
+ * @LastEditTime: 2021-05-11 22:25:32
  * @FilePath: \mp-mixin\src\type.d.ts
  * @Description: Coding something
  */
@@ -11,7 +11,7 @@ export interface IStore {
     state: IJson;
     __: {
         _id: number;
-        _injectContext (currentContext: IContext): void;
+        _injectContext (currentContext: IContext, storeTool: IJson): void;
         _hitState (setDataAttr: string, value: any, ignoreList: string[]): boolean;
     }
 }
@@ -24,15 +24,13 @@ export interface IEventReady<T> {
 export interface IJson<T = any> {
     [prop: string]: T;
 }
-export declare interface IPageOption extends IJson{
+
+interface IMixinOption {
     data: IJson;
     mixin?: ILocalMixin;
 }
 
-interface IBaseMixin {
-    data?: IJson;
-    methods?: IJson<Function>;
-
+export interface IPageLifeTimes {
     onLoad?(query: any): void | Promise<void>
     onShow?(): void | Promise<void>
     onReady?(): void | Promise<void>
@@ -74,6 +72,22 @@ interface IBaseMixin {
         query?: string
     }
 }
+export interface IPageOption extends IJson, IMixinOption, IPageLifeTimes {
+}
+
+interface IComponentLifetimeOptions {
+    lifetimes?: IComponentLifeTimes; // 仅针对组件有效
+    pageLifetimes?: IComponentPageLifeTimes; // 仅针对组件有效
+}
+export interface IComponentOption extends IPageOption, IMixinOption, IComponentLifetimeOptions {
+    methods?: IJson<Function>;
+}
+
+interface IBaseMixin extends IComponentLifetimeOptions, IPageLifeTimes {
+    data?: IJson;
+    methods?: IJson<Function>;
+
+}
 
 export interface ILocalMixin extends IBaseMixin {
     store?: IStore;
@@ -95,4 +109,28 @@ export interface ICreateStoreFn {
 }
 export interface IInitGlobalStoreFn {
     (state: IJson | IStore): IStore;
+}
+
+export interface IComponentLifeTimes {
+    created?(): void;
+    attached?(): void;
+    ready?(): void;
+    moved?(): void;
+    detached?(): void;
+    error?(err: {
+        name: string;
+        message: string;
+        stack?: string;
+    }): void;
+}
+
+export interface IComponentPageLifeTimes {
+    show?(): void;
+    hide?(): void;
+    resize?(size: {
+        size: {
+            windowWidth: number;
+            windowHeight: number;
+        };
+    }): void;
 }

@@ -1,2 +1,4 @@
 <!--components/test-comp/index.wxml-->
-<text>{{compProp}}</text>
+<view>{{compProp}}</view>
+<view>{{globalData}}</view>
+<view>{{globalData2}}</view>

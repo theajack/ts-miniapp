@@ -3,9 +3,12 @@
   <view class="userinfo">
     <test-comp compProp="{{compProp}}"></test-comp>
     <button class="btn" type="primary" bindtap="onTap">
-      按钮文本
+      set globaleData
     </button>
-    <block wx:if="{{canIUseOpenData}}" calss="userinfo-opendata">
+    <button class="btn" type="primary" bindtap="gotoLog">
+      gotoLog
+    </button>
+    <!-- <block wx:if="{{canIUseOpenData}}" calss="userinfo-opendata">
       <view class="userinfo-avatar" bindtap="bindViewTap">
         <open-data type="userAvatarUrl"></open-data>
       </view>
@@ -19,9 +22,9 @@
     <block wx:else>
       <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
       <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-    </block>
+    </block> -->
   </view>
   <view class="usermotto">
-    <text class="user-motto">{{motto}}{{globalData}}</text>
+    <text class="user-motto">{{globalData}}</text>
   </view>
 </view>

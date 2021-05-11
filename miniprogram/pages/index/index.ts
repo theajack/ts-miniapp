@@ -6,7 +6,7 @@ const app = getApp<IAppOption>();
 Page({
     data: {
         compProp: 'from par',
-        motto: 'Hello World11111',
+        motto: 'Hello World',
         userInfo: {},
         hasUserInfo: false,
         canIUse: wx.canIUse('button.open-type.getUserInfo'),
@@ -20,7 +20,10 @@ Page({
         });
     },
     onTap () {
-        this.setData({compProp: '11111'});
+        this.setData({globalData: 'new from index'});
+    },
+    gotoLog () {
+        wx.navigateTo({url: '/pages/logs/logs'});
     },
     onLoad () {
     // @ts-ignore

@@ -3,8 +3,11 @@ import './utils/mp-mixin/index';
 
 wx.mixin({
     data: {
-        globalData: 'globalData'
+        globalData2: 'globalData2'
     },
+    store: {
+        globalData: 'globalData'
+    }
 });
 
 // app.ts
