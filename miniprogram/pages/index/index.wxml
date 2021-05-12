@@ -1,34 +1,13 @@
 <!--index.wxml-->
 <view class="container">
-  <view class="userinfo">
-    <test-comp compProp="{{compProp}}"></test-comp>
-    <button class="btn" type="primary" bindtap="onTap">
-      set globaleData
-    </button>
-    <button class="btn" type="primary" bindtap="onTapLocal">
-      set localStoreData
-    </button>
-    <button class="btn" type="primary" bindtap="gotoLog">
-      gotoLog
-    </button>
-    <!-- <block wx:if="{{canIUseOpenData}}" calss="userinfo-opendata">
-      <view class="userinfo-avatar" bindtap="bindViewTap">
-        <open-data type="userAvatarUrl"></open-data>
-      </view>
-      <open-data type="userNickName"></open-data>
-    </block>
-    <block wx:elif="{{!hasUserInfo}}">
-      <button wx:if="{{canIUseGetUserProfile}}" bindtap="getUserProfile"> 获取头像昵称 </button>
-      <button wx:elif="{{canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 获取头像昵称 </button>
-      <view wx:else> 请使用1.4.4及以上版本基础库 </view>
-    </block>
-    <block wx:else>
-      <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
-      <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-    </block> -->
-  </view>
-  <view class="usermotto">
-    <text class="user-motto">{{globalData}}</text>
-    <view class="user-motto">{{localStoreData}}</view>
-  </view>
+    <test-comp componentProp="{{componentProp}}"></test-comp>
+    <view style='margin-top: 10px'>
+      <view>父组件数据</view>
+      <view>{{globalData}}</view>
+      <view>{{globalStoreData}}</view>
+      <view>{{localStoreData}}</view>
+      <button class='button' size="default" type="primary" bindtap="onTapGloabl">父组件修改 globalStoreData</button>
+      <button class='button' size="default" type="primary" bindtap="onTapLocal">父组件修改 localStoreData</button>
+    <button class='button' size="default" type="primary" bindtap="gotoSecond">打开第二页</button>
+    </view>
 </view>

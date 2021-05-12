@@ -1,5 +1,6 @@
 // components/test-comp/index.js
 import {localStore} from '../../utils/util';
+let index = 0;
 Component({
     /**
      * 组件的属性列表
@@ -8,24 +9,16 @@ Component({
         store: localStore,
     },
     properties: {
-        compProp: {
+        componentProp: {
             type: String,
-            value: 'comp prop',
+            value: 'component prop',
         }
     },
   
-    /**
-     * 组件的初始数据
-     */
-    data: {
-        compData: 'comp data'
-    },
     lifetimes: {
         attached () {
-            console.log('attached');
         },
         detached () {
-            console.log('detached');
         }
     },
     pageLifetimes: {
@@ -36,7 +29,12 @@ Component({
      * 组件的方法列表
      */
     methods: {
-  
+        onTapGloabl () {
+            this.setData({globalStoreData: `[${(++index)}]global store changed from child`});
+        },
+        onTapLocal () {
+            this.setData({localStoreData: `[${(++index)}]local store changed from child`});
+        },
     }
 });
   

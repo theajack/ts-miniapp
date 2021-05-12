@@ -1,12 +1,13 @@
 import 'mp-mixin';
+// import './utils/mp-mixin/index';
 
 
 wx.mixin({
     data: {
-        globalData2: 'globalData2'
+        globalData: 'globalData'
     },
     store: {
-        globalData: 'globalData'
+        globalStoreData: 'globalStoreData'
     },
 });
 

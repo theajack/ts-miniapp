@@ -1,1 +1,12 @@
 /* components/test-comp/index.wxss */
+
+.component-area{
+    border: 1px solid #aaa;
+    padding: 10px;
+    color: #444;
+}
+
+.button{
+  width: 100%!important;
+  margin: 5px 0;
+}

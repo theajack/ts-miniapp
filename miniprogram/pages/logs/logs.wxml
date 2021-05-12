@@ -1,13 +1,7 @@
 <!--logs.wxml-->
-<view class="container log-list">
-    <text class="user-motto">{{globalData}}</text>
-    <button class="btn" type="primary" bindtap="onTap">
-      set globalData
-    </button>
-    <button class="btn" type="primary" bindtap="gotoIndex">
-      goto index
-    </button>
-  <block wx:for="{{logs}}" wx:key="timeStamp" wx:for-item="log">
-    <text class="log-item">{{index + 1}}. {{log.date}}</text>
-  </block>
+<view class="container">
+    <view>{{globalData}}</view>
+    <view>{{globalStoreData}}</view>
+    <button class='button' size="default" type="primary" bindtap="onTapGloabl">修改 globalStoreData</button>
+    <button class='button' size="default" type="primary" bindtap="gotoIndex">打开首页</button>
 </view>

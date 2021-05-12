@@ -1,5 +1,10 @@
 <!--components/test-comp/index.wxml-->
-<view>{{compProp}}</view>
-<view>{{globalData}}</view>
-<view>{{globalData2}}</view>
-<view>{{localStoreData}}</view>
+<view class='component-area'>
+    <view>子组件数据</view>
+    <view>{{componentProp}}</view>
+    <view>{{globalData}}</view>
+    <view>{{globalStoreData}}</view>
+    <view>{{localStoreData}}</view>
+    <button class='button' size="default" type="primary" bindtap="onTapGloabl">子组件修改 globalStoreData</button>
+    <button class='button' size="default" type="primary" bindtap="onTapLocal">子组件修改 localStoreData</button>
+</view>

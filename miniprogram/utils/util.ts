@@ -1,4 +1,3 @@
-import {createStore} from './mp-mixin/index';
 
 export const formatTime = (date: Date) => {
     const year = date.getFullYear();
@@ -20,6 +19,6 @@ const formatNumber = (n: number) => {
     return s[1] ? s : '0' + s;
 };
  
-export const localStore = createStore({
+export const localStore = wx.createStore({
     localStoreData: 'localStoreData'
 });
