@@ -1,15 +1,15 @@
 /*
  * @Author: tackchen
  * @Date: 2021-05-01 19:32:42
- * @LastEditors: theajack
- * @LastEditTime: 2021-05-11 22:45:21
+ * @LastEditors: tackchen
+ * @LastEditTime: 2021-05-12 13:56:45
  * @FilePath: \mp-mixin\src\mixin.ts
  * @Description: Coding something
  */
 
 import {TARGET_TYPE} from './constant';
 import {checkGlobalMixinStore, injectStore} from './store';
-import {IComponentOption, IGlobalMixin, IJson, ILocalMixin, IPageOption} from './type';
+import {IComponentMixin, IComponentOption, IContext, IGlobalMixin, IJson, IPageMixin, IPageOption} from './type';
 import {deepClone, mapToTarget, pick} from './util';
 
 let globalMixins: IGlobalMixin;
@@ -33,7 +33,7 @@ const pageLifeTimeNames = [
 ];
 
 export function mixinData (options: IPageOption, data?: IJson) {
-    if (typeof data === 'undefined') return;
+    if (typeof data === 'undefined' || typeof options.data === 'undefined') return;
     mapToTarget({
         data,
         target: options.data
@@ -60,29 +60,49 @@ function mixinMethods (
 
 function mixinLifeTimes (
     options: IPageOption,
-    mixin: IGlobalMixin | ILocalMixin
+    mixin: IGlobalMixin | IPageMixin
 ) {
     const leftTimes = pick(mixin, pageLifeTimeNames);
-  
+    
     mapToTarget({
         data: leftTimes,
         target: options
     });
+
+    markUnload(options);
+}
+
+// ! 标记 当前组件或页面被unload了， 用户store中取消监听
+function markUnload (leftTimes: IJson, type: TARGET_TYPE = TARGET_TYPE.PAGE) {
+    const markUnloadFlag = function (this: IContext) {
+        this.__unload = true;
+    };
+    const name = type === TARGET_TYPE.PAGE ? 'onUnload' : 'detached';
+    if (leftTimes[name]) {
+        const nativeMethod = leftTimes[name];
+        leftTimes[name] = function (this: IContext) {
+            nativeMethod.call(this);
+            markUnloadFlag.call(this);
+        };
+    } else {
+        leftTimes[name] = markUnloadFlag;
+    }
 }
 
 function mixinComponentLifeTimes (
     options: IComponentOption,
-    mixin: IGlobalMixin | ILocalMixin
+    mixin: IComponentMixin
 ) {
     const leftTimes = mixin.lifetimes;
 
+    if (!options.lifetimes) {options.lifetimes = {};}
     if (leftTimes) {
-        if (!options.lifetimes) {options.lifetimes = {};}
         mapToTarget({
             data: leftTimes,
             target: options.lifetimes
         });
     }
+    markUnload(options.lifetimes, TARGET_TYPE.COMPONENT);
 
     const pageLiftTimes = mixin.pageLifetimes;
     if (pageLiftTimes) {
@@ -102,7 +122,7 @@ export function mixinCurrent ({
     storeTool,
 }: {
     options: IPageOption | IComponentOption;
-    mixin?: IGlobalMixin | ILocalMixin;
+    mixin?: IGlobalMixin | IPageMixin;
     global?: boolean;
     type?: TARGET_TYPE;
     storeTool: IJson;
@@ -114,12 +134,12 @@ export function mixinCurrent ({
         return options;
     }
   
-    mixin = deepClone(mixin) as IGlobalMixin | ILocalMixin;
+    mixin = deepClone(mixin) as IGlobalMixin | IPageMixin;
 
     if (type === TARGET_TYPE.PAGE) {
-        mixinLifeTimes(options as IPageOption, mixin);
+        mixinLifeTimes(options as IPageOption, mixin as IPageMixin);
     } else if (type === TARGET_TYPE.COMPONENT) {
-        mixinComponentLifeTimes(options as IComponentOption, mixin);
+        mixinComponentLifeTimes(options as IComponentOption, mixin as IComponentMixin);
     }
     mixinData(options, mixin.data);
     mixinMethods(options, mixin.methods, type);

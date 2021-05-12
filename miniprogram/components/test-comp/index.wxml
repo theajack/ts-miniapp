@@ -2,3 +2,4 @@
 <view>{{compProp}}</view>
 <view>{{globalData}}</view>
 <view>{{globalData2}}</view>
+<view>{{localStoreData}}</view>

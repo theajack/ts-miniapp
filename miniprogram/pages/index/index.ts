@@ -1,9 +1,17 @@
 // index.ts
 
+import {localStore} from '../../utils/util';
+
 // 获取应用实例
 const app = getApp<IAppOption>();
 let index = 0;
+
+
 Page({
+    mixin: {
+        store: localStore,
+    
+    },
     data: {
         compProp: 'from par',
         motto: 'Hello World',
@@ -21,6 +29,10 @@ Page({
     },
     onTap () {
         this.setData({globalData: 'new from index' + (++index)});
+    },
+    onTapLocal () {
+
+        this.setData({localStoreData: 'new local from index' + (++index)});
     },
     gotoLog () {
         wx.navigateTo({url: '/pages/logs/logs'});

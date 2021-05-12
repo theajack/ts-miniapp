@@ -1,8 +1,8 @@
 /*
  * @Author: tackchen
  * @Date: 2021-05-02 11:11:35
- * @LastEditors: theajack
- * @LastEditTime: 2021-05-12 00:06:05
+ * @LastEditors: tackchen
+ * @LastEditTime: 2021-05-12 13:53:26
  * @FilePath: \mp-mixin\src\type.d.ts
  * @Description: Coding something
  */
@@ -11,7 +11,7 @@ export interface IStore {
     state: IJson;
     __: {
         _id: number;
-        _injectContext (currentContext: IContext, storeTool: IJson, type: number): void;
+        _injectContext (currentContext: IContext, storeTool: IJson): void;
         _hitState (setDataAttr: string, value: any, ignoreList: string[], newContext: IContext): boolean;
     }
 }
@@ -27,8 +27,8 @@ export interface IJson<T = any> {
 }
 
 interface IMixinOption {
-    data: IJson;
-    mixin?: ILocalMixin;
+    data?: IJson;
+    mixin?: IPageMixin;
 }
 
 export interface IPageLifeTimes {
@@ -84,17 +84,20 @@ export interface IComponentOption extends IPageOption, IMixinOption, IComponentL
     methods?: IJson<Function>;
 }
 
-interface IBaseMixin extends IComponentLifetimeOptions, IPageLifeTimes {
+interface IBaseMixin {
     data?: IJson;
     methods?: IJson<Function>;
-
 }
 
-export interface ILocalMixin extends IBaseMixin {
+export interface IPageMixin extends IBaseMixin, IPageLifeTimes {
     store?: IStore;
 }
 
-export interface IGlobalMixin extends IBaseMixin {
+export interface IComponentMixin extends IBaseMixin, IComponentLifetimeOptions {
+    store?: IStore;
+}
+
+export interface IGlobalMixin extends IBaseMixin, IPageLifeTimes, IComponentLifetimeOptions {
     store?: IStore | IJson;
 }
 

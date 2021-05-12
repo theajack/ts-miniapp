@@ -1,8 +1,8 @@
 /*
  * @Author: tackchen
  * @Date: 2021-05-01 20:29:47
- * @LastEditors: theajack
- * @LastEditTime: 2021-05-12 00:57:39
+ * @LastEditors: tackchen
+ * @LastEditTime: 2021-05-12 13:57:57
  * @FilePath: \mp-mixin\src\store.ts
  * @Description: 状态共享
  */
@@ -47,26 +47,18 @@ export function _createStore (state: IJson): IStore {
         state,
         __: {
             _id: currentId,
-            _injectContext (currentContext: IContext, storeTool: IJson, type: TARGET_TYPE) {
+            _injectContext (currentContext: IContext, storeTool: IJson) {
                 hackSetData(currentContext, currentId, storeTool);
                 const listener = onEventReady((data, newContext) => {
-                    // ! 仅对其他页面或组件进行出发 setData
-                    if (currentContext !== newContext) {
+                    if (currentContext.__unload) {
+                        // ! 对已经不再显示的 page或组件 取消监听
+                        removeListener(listener);
+                    } else if (currentContext !== newContext) {
+                        // ! 仅对其他页面或组件进行出发 setData
                         console.log('onEventReady', data);
                         storeTool._nativeSetData.call(currentContext, data);
                     }
                 });
-                if (type === TARGET_TYPE.PAGE) {
-                    // ! 对已经不再显示的 page 取消监听
-                    const nativeUnload = currentContext.onUnload;
-                    currentContext.onUnload = function () {
-                        removeListener(listener);
-                        nativeUnload.call(currentContext);
-                    };
-                } else {
-                    // todo 有待增加 对组件和page原有属的处理 默认是Page会覆盖 组件会忽略
-                    // todo 有待hack组件的dtached 事件，在其中 removeListener
-                }
             },
             _hitState (setDataAttr: string, value: any, ignoreList: string[], newContext: IContext) {
                 const attrs = getAttrs(setDataAttr);
@@ -80,6 +72,8 @@ export function _createStore (state: IJson): IStore {
         }
     };
 }
+// todo 有待增加 对组件和page原有属的处理 默认是Page会覆盖 组件会忽略
+
 // todo 有待测试组件局部使用 mixin
 // todo 有待测试多个 store 在一个组件或者page上的场景，包含局部 + 全局；多个局部+全局；多个局部三个场景
 function hackSetData (context: IContext, storeId: number, storeTool: IJson) {
@@ -168,7 +162,7 @@ function handleStore ({
 }) {
     if (!store) return;
     const setDataHacker = function (this: IContext) {
-        store.__._injectContext(this, storeTool, type);
+        store.__._injectContext(this, storeTool);
     };
     const nativeOnLoad = readOnloadLifeTime(options, type);
     if (!nativeOnLoad) { // 劫持onLoad来注入setData
@@ -207,6 +201,7 @@ export function injectStore ({
     storeTool: IJson;
     global?: boolean;
 }) {
+    if (typeof options.data === 'undefined') return;
     const store = ((global) ? globalStore : (options.store || mixinStore)) as IStore;
     if (!store) return;
     if (!storeTool._store) {storeTool._store = {};};

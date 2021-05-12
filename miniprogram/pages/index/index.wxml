@@ -5,6 +5,9 @@
     <button class="btn" type="primary" bindtap="onTap">
       set globaleData
     </button>
+    <button class="btn" type="primary" bindtap="onTapLocal">
+      set localStoreData
+    </button>
     <button class="btn" type="primary" bindtap="gotoLog">
       gotoLog
     </button>
@@ -26,5 +29,6 @@
   </view>
   <view class="usermotto">
     <text class="user-motto">{{globalData}}</text>
+    <view class="user-motto">{{localStoreData}}</view>
   </view>
 </view>

@@ -1,4 +1,4 @@
-import './utils/mp-mixin/index';
+import 'mp-mixin';
 
 
 wx.mixin({
@@ -7,7 +7,7 @@ wx.mixin({
     },
     store: {
         globalData: 'globalData'
-    }
+    },
 });
 
 // app.ts

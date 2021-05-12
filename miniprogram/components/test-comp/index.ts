@@ -1,8 +1,12 @@
 // components/test-comp/index.js
+import {localStore} from '../../utils/util';
 Component({
     /**
      * 组件的属性列表
      */
+    mixin: {
+        store: localStore,
+    },
     properties: {
         compProp: {
             type: String,

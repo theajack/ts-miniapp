@@ -1,3 +1,5 @@
+import {createStore} from './mp-mixin/index';
+
 export const formatTime = (date: Date) => {
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
@@ -18,3 +20,6 @@ const formatNumber = (n: number) => {
     return s[1] ? s : '0' + s;
 };
  
+export const localStore = createStore({
+    localStoreData: 'localStoreData'
+});
