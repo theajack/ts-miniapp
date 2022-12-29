@@ -1,6 +1,9 @@
+/*
+ * @Author: chenzhongsheng
+ * @Date: 2022-12-29 21:38:42
+ * @Description: Coding something
+ */
 import 'mp-mixin';
-// import './utils/mp-mixin/index';
-
 
 wx.mixin({
     data: {
@@ -9,6 +12,15 @@ wx.mixin({
     store: {
         globalStoreData: 'globalStoreData'
     },
+    onLoad (e) {
+        console.log('onLoad', e);
+    },
+    onShow () {
+        console.log('onShow - 页面显示');
+    },
+    onShareAppMessage () {
+        console.log('分享');
+    }
 });
 
 // app.ts
